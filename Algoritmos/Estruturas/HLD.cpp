@@ -3,12 +3,15 @@ using namespace std;
 
 /*
  * Heavy Light Decomposition
- * 
- * Responde a queries em log2(n) e updates em log(n)
- * É feita uma decomposicao da arvore em correntes, 
- * e aplicada uma segment tree a cada corrente.
- * 
+ * query and update 0(log n)
  */
+
+
+const int MAXN = 5e3 + 10;
+const int INF = 1e9 + 10;
+
+#define left(x) (x << 1)
+#define right(x) ((x << 1) + 1)
 
 int ncha;
 int parent[MAXN], fson[MAXN], size[MAXN];
@@ -69,7 +72,7 @@ public:
     SegmentTree(int sz) {
         size = sz;
         st.assign(size * 4, 0);
-        lazy.assign(sie * 4, 0);
+        lazy.assign(size * 4, 0);
     }
 
     int query(int a, int b) {
@@ -105,11 +108,13 @@ void build(int u, int ch, int h) {
         if(v == fson[u]) build(v, ch, h + 1);
         else {
             up[ncha] = u; depth[ncha] = h;
-            chain[nch].clear();
+            chain[ncha].clear();
             build(v, ncha++, h + 1);
         }
     }
 }
+
+vector<SegmentTree> hld;
 
 void HLD(int root) {
     chainsz(root, -1);
@@ -119,7 +124,7 @@ void HLD(int root) {
     build(root, ncha++, 1);
 
     for(int i=0; i < ncha; ++i) {
-        st[i].push_back(SegmentTree(chain[i].size()));
+        hld.push_back(SegmentTree(chain[i].size()));
     }
 }
 
@@ -139,14 +144,26 @@ void update(int u, int v, int value) {
     }
 
     if (id[u] < id[v]) {
-		hld[cu].update(id[u], id[v], value);
-	}
-	else {
-		hld[cu].update(id[v], id[u], value);
-	}
+        hld[cu].update(id[u], id[v], value);
+    }
+    else {
+        hld[cu].update(id[v], id[u], value);
+    }
 }
 
-
 int main() {
+
+    int n, d, u, v, w, m, q;
+
+    scanf("%d %d", &n , &d);
+
+    for(int i=0; i < n -1; ++i) {
+        scanf("%d %d", &u, &v);
+        G[u].push_back(v);
+        G[v].push_back(u);
+    }
+
+    HLD(1);
+
     return 0;
 }
