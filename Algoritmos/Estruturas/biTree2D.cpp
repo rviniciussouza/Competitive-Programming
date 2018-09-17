@@ -2,6 +2,8 @@
 using namespace std;
 #define MAXN 110
 
+/* @rviniciussouza */
+
 int BIT[MAXN][MAXN];
 int n, m;
 
